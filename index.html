@@ -9,17 +9,17 @@
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;1,9..144,500;1,9..144,600&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root{
-    --ink:#16262b;
-    --ink-soft:#4b5b60;
-    --sea-deep:#0c3540;
-    --sea-mid:#155263;
-    --sea-glow:#3a9aab;
-    --cream:#fbf5ec;
-    --cream-dim:#f1e8da;
-    --coral:#e8735a;
-    --coral-dark:#c85a42;
-    --gold:#d6a24e;
-    --line: rgba(22,38,43,0.14);
+    --ink:#4a3b4a;
+    --ink-soft:#7a6b7a;
+    --pink-deep:#f8b4d9;
+    --pink-mid:#f9c8e8;
+    --pink-glow:#ffd6f5;
+    --cream:#fff5f8;
+    --cream-dim:#ffe8f0;
+    --coral:#ff9eb5;
+    --coral-dark:#ff7a9a;
+    --gold:#ffb6c1;
+    --line: rgba(255,182,193,0.25);
     --radius: 22px;
   }
 
@@ -36,9 +36,9 @@
     display:flex; align-items:center; justify-content:center;
     padding: 32px 16px;
     background:
-      radial-gradient(circle at 20% 15%, rgba(58,154,171,0.35), transparent 45%),
-      radial-gradient(circle at 85% 85%, rgba(214,162,78,0.18), transparent 50%),
-      linear-gradient(160deg, var(--sea-deep) 0%, var(--sea-mid) 55%, var(--sea-glow) 130%);
+      radial-gradient(circle at 20% 15%, rgba(255,182,193,0.4), transparent 45%),
+      radial-gradient(circle at 85% 85%, rgba(255,158,181,0.25), transparent 50%),
+      linear-gradient(160deg, var(--pink-deep) 0%, var(--pink-mid) 55%, var(--pink-glow) 130%);
     position:relative;
     overflow:hidden;
   }
@@ -48,7 +48,7 @@
     position:absolute;
     width:6px; height:6px;
     border-radius:50%;
-    background:rgba(251,245,236,0.35);
+    background:rgba(255,245,248,0.5);
     animation: drift 14s ease-in-out infinite;
   }
   @keyframes drift{
@@ -83,10 +83,10 @@
     width:56px; height:56px;
     border-radius:50%;
     background:var(--cream-dim);
-    border:1.5px dashed var(--gold);
+    border:1.5px dashed var(--coral);
     display:flex; align-items:center; justify-content:center;
     transform:rotate(8deg);
-    color:var(--gold);
+    color:var(--coral);
   }
   .stamp svg{ width:26px; height:26px; }
 
@@ -168,7 +168,7 @@
     position:absolute;
     width:14px; height:14px;
     border-radius:50%;
-    border:1.5px solid var(--sea-glow);
+    border:1.5px solid var(--coral);
     opacity:0.6;
     pointer-events:none;
     animation:rippleOut 0.6s ease-out forwards;
@@ -221,7 +221,7 @@
     -webkit-appearance:none;
     height:6px;
     border-radius:4px;
-    background:linear-gradient(90deg, var(--sea-glow), var(--gold));
+    background:linear-gradient(90deg, var(--pink-glow), var(--coral));
     outline:none;
   }
   input[type="range"]::-webkit-slider-thumb{
@@ -229,7 +229,7 @@
     width:22px; height:22px;
     border-radius:50%;
     background:var(--cream);
-    border:3px solid var(--gold);
+    border:3px solid var(--coral);
     cursor:pointer;
     box-shadow:0 2px 6px rgba(0,0,0,0.25);
   }
@@ -237,7 +237,7 @@
     width:22px; height:22px;
     border-radius:50%;
     background:var(--cream);
-    border:3px solid var(--gold);
+    border:3px solid var(--coral);
     cursor:pointer;
   }
 
@@ -248,7 +248,7 @@
     width:8px; height:8px; border-radius:50%;
     background:var(--line);
   }
-  .dot.active{ background:var(--gold); }
+  .dot.active{ background:var(--coral); }
 
   .seal{
     font-size:34px;
@@ -323,10 +323,15 @@
 
     <section class="screen" data-screen="date">
       <p class="eyebrow">Шаг 1 из 3 · День</p>
-      <h2 class="title-sm">Когда?</h2>
-      <div class="option-grid" data-field="date">
-        <button class="option-card" data-value="Суббота">Суббота</button>
-        <button class="option-card" data-value="Воскресенье">Воскресенье</button>
+      <h2 class="title-sm">Когда? (на следующей неделе)</h2>
+      <div class="option-grid" data-field="date" style="grid-template-columns: 1fr 1fr 1fr; gap: 10px;">
+        <button class="option-card" data-value="Понедельник">Пн</button>
+        <button class="option-card" data-value="Вторник">Вт</button>
+        <button class="option-card" data-value="Среда">Ср</button>
+        <button class="option-card" data-value="Четверг">Чт</button>
+        <button class="option-card" data-value="Пятница">Пт</button>
+        <button class="option-card" data-value="Суббота">Сб</button>
+        <button class="option-card" data-value="Воскресенье">Вс</button>
       </div>
       <div class="dots">
         <span class="dot active"></span><span class="dot"></span><span class="dot"></span>
@@ -354,6 +359,7 @@
         <button class="option-card" data-value="Парк Горького">Парк Горького</button>
         <button class="option-card" data-value="Аркадия">Аркадия</button>
         <button class="option-card" data-value="Дерибасовская">Дерибасовская</button>
+        <button class="option-card" data-value="написать самой" style="grid-column: span 2;">Написать самой ✨</button>
       </div>
       <div class="dots">
         <span class="dot active"></span><span class="dot active"></span><span class="dot active"></span>
@@ -362,7 +368,7 @@
 
     <section class="screen" data-screen="final">
       <div class="seal">💌</div>
-      <h2 class="title-sm">Хорошо, принцесс</h2>
+      <h2 class="title-sm">Хорошо принцесс :)</h2>
       <div class="summary">
         <div class="summary-row"><span>День</span><strong id="sumDate">—</strong></div>
         <div class="summary-row"><span>Время</span><strong id="sumTime">—</strong></div>
