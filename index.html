@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+<title>Свидание?</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;1,9..144,500;1,9..144,600&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#16262b;
+    --ink-soft:#4b5b60;
+    --sea-deep:#0c3540;
+    --sea-mid:#155263;
+    --sea-glow:#3a9aab;
+    --cream:#fbf5ec;
+    --cream-dim:#f1e8da;
+    --coral:#e8735a;
+    --coral-dark:#c85a42;
+    --gold:#d6a24e;
+    --line: rgba(22,38,43,0.14);
+    --radius: 22px;
+  }
+
+  *{ box-sizing:border-box; }
+
+  html,body{
+    margin:0; padding:0; min-height:100%;
+  }
+
+  body{
+    font-family:'Manrope', sans-serif;
+    color:var(--ink);
+    min-height:100vh;
+    display:flex; align-items:center; justify-content:center;
+    padding: 32px 16px;
+    background:
+      radial-gradient(circle at 20% 15%, rgba(58,154,171,0.35), transparent 45%),
+      radial-gradient(circle at 85% 85%, rgba(214,162,78,0.18), transparent 50%),
+      linear-gradient(160deg, var(--sea-deep) 0%, var(--sea-mid) 55%, var(--sea-glow) 130%);
+    position:relative;
+    overflow:hidden;
+  }
+
+  .bg-ambient{ position:fixed; inset:0; pointer-events:none; z-index:0; }
+  .speck{
+    position:absolute;
+    width:6px; height:6px;
+    border-radius:50%;
+    background:rgba(251,245,236,0.35);
+    animation: drift 14s ease-in-out infinite;
+  }
+  @keyframes drift{
+    0%,100%{ transform:translateY(0) translateX(0); opacity:0.25; }
+    50%{ transform:translateY(-40px) translateX(12px); opacity:0.55; }
+  }
+
+  .stage{ position:relative; z-index:1; width:100%; display:flex; justify-content:center; }
+
+  .postcard{
+    position:relative;
+    width:100%;
+    max-width:460px;
+    background:var(--cream);
+    border-radius:var(--radius);
+    padding:52px 40px 44px;
+    box-shadow: 0 30px 70px -20px rgba(6,25,30,0.55), 0 2px 0 rgba(255,255,255,0.4) inset;
+    overflow:hidden;
+  }
+  .postcard::before{
+    content:"";
+    position:absolute;
+    inset:10px;
+    border-radius:calc(var(--radius) - 8px);
+    border:1.5px dashed var(--line);
+    pointer-events:none;
+  }
+
+  .stamp{
+    position:absolute;
+    top:18px; right:22px;
+    width:56px; height:56px;
+    border-radius:50%;
+    background:var(--cream-dim);
+    border:1.5px dashed var(--gold);
+    display:flex; align-items:center; justify-content:center;
+    transform:rotate(8deg);
+    color:var(--gold);
+  }
+  .stamp svg{ width:26px; height:26px; }
+
+  .screen{
+    display:none;
+    opacity:0;
+    transform:translateY(10px);
+    animation:enter 0.5s ease forwards;
+  }
+  .screen.active{ display:block; }
+  @keyframes enter{
+    to{ opacity:1; transform:translateY(0); }
+  }
+
+  .eyebrow{
+    font-size:12px;
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    color:var(--ink-soft);
+    margin:0 0 14px;
+    font-weight:600;
+  }
+
+  .title{
+    font-family:'Fraunces', serif;
+    font-style:italic;
+    font-weight:500;
+    font-size:clamp(28px, 6vw, 36px);
+    line-height:1.18;
+    margin:0 0 32px;
+    padding-right:50px;
+  }
+
+  .title-sm{
+    font-family:'Fraunces', serif;
+    font-weight:600;
+    font-size:26px;
+    margin:0 0 24px;
+  }
+
+  .choice-arena{
+    position:relative;
+    height:150px;
+    margin-bottom:6px;
+  }
+
+  .btn{
+    font-family:'Manrope', sans-serif;
+    font-weight:700;
+    font-size:16px;
+    border:none;
+    border-radius:999px;
+    padding:14px 30px;
+    cursor:pointer;
+    transition:transform 0.15s ease, box-shadow 0.15s ease;
+  }
+  .btn:active{ transform:scale(0.97); }
+
+  .btn-primary{
+    background:var(--coral);
+    color:var(--cream);
+    box-shadow:0 10px 20px -8px rgba(200,90,66,0.6);
+  }
+  .btn-primary:hover{ background:var(--coral-dark); transform:translateY(-1px); }
+
+  #yesBtn{ position:absolute; top:14px; left:0; }
+
+  .btn-ghost{
+    position:absolute;
+    top:14px;
+    left:150px;
+    background:transparent;
+    color:var(--ink-soft);
+    border:1.5px solid var(--line);
+    white-space:nowrap;
+  }
+
+  .ripple{
+    position:absolute;
+    width:14px; height:14px;
+    border-radius:50%;
+    border:1.5px solid var(--sea-glow);
+    opacity:0.6;
+    pointer-events:none;
+    animation:rippleOut 0.6s ease-out forwards;
+  }
+  @keyframes rippleOut{
+    to{ transform:scale(3.4); opacity:0; }
+  }
+
+  .option-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:12px;
+    margin-bottom:8px;
+  }
+  .option-grid.two-col{ grid-template-columns:1fr 1fr; }
+
+  .option-card{
+    font-family:'Manrope', sans-serif;
+    font-weight:600;
+    font-size:15px;
+    color:var(--ink);
+    background:var(--cream-dim);
+    border:1.5px solid var(--line);
+    border-radius:14px;
+    padding:18px 12px;
+    cursor:pointer;
+    text-align:center;
+    transition:transform 0.15s ease, border-color 0.15s ease, background 0.15s ease;
+  }
+  .option-card:hover{ transform:translateY(-2px); border-color:var(--sea-glow); }
+  .option-card.selected{
+    background:var(--coral);
+    border-color:var(--coral-dark);
+    color:var(--cream);
+  }
+
+  .time-picker{
+    margin-bottom:28px;
+  }
+  #timeOutput{
+    display:block;
+    font-family:'Fraunces', serif;
+    font-weight:600;
+    font-size:34px;
+    margin-bottom:14px;
+    color:var(--coral-dark);
+  }
+  input[type="range"]{
+    width:100%;
+    -webkit-appearance:none;
+    height:6px;
+    border-radius:4px;
+    background:linear-gradient(90deg, var(--sea-glow), var(--gold));
+    outline:none;
+  }
+  input[type="range"]::-webkit-slider-thumb{
+    -webkit-appearance:none;
+    width:22px; height:22px;
+    border-radius:50%;
+    background:var(--cream);
+    border:3px solid var(--gold);
+    cursor:pointer;
+    box-shadow:0 2px 6px rgba(0,0,0,0.25);
+  }
+  input[type="range"]::-moz-range-thumb{
+    width:22px; height:22px;
+    border-radius:50%;
+    background:var(--cream);
+    border:3px solid var(--gold);
+    cursor:pointer;
+  }
+
+  .dots{
+    display:flex; gap:8px; margin-top:28px;
+  }
+  .dot{
+    width:8px; height:8px; border-radius:50%;
+    background:var(--line);
+  }
+  .dot.active{ background:var(--gold); }
+
+  .seal{
+    font-size:34px;
+    margin-bottom:10px;
+  }
+
+  .summary{
+    background:var(--cream-dim);
+    border-radius:14px;
+    padding:6px 18px;
+    margin:20px 0 26px;
+  }
+  .summary-row{
+    display:flex; justify-content:space-between; align-items:center;
+    padding:12px 0;
+    border-bottom:1px solid var(--line);
+    font-size:15px;
+  }
+  .summary-row:last-child{ border-bottom:none; }
+  .summary-row span{ color:var(--ink-soft); font-weight:500; }
+  .summary-row strong{ font-weight:700; }
+
+  .signoff{
+    font-family:'Fraunces', serif;
+    font-style:italic;
+    font-size:19px;
+    color:var(--ink-soft);
+    margin:0;
+  }
+
+  @media (max-width: 420px){
+    .postcard{ padding:44px 26px 36px; }
+    .btn-ghost{ left:auto; right:0; }
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    .speck{ animation:none; }
+    .screen{ animation:none; opacity:1; transform:none; }
+    .ripple{ display:none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="bg-ambient" aria-hidden="true">
+  <span class="speck" style="top:12%; left:8%; animation-delay:0s;"></span>
+  <span class="speck" style="top:30%; left:85%; animation-delay:2s;"></span>
+  <span class="speck" style="top:70%; left:15%; animation-delay:4s;"></span>
+  <span class="speck" style="top:80%; left:75%; animation-delay:1s;"></span>
+  <span class="speck" style="top:50%; left:50%; animation-delay:3s;"></span>
+</div>
+
+<main class="stage">
+  <div class="postcard" id="postcard">
+
+    <div class="stamp" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M2 12c2 2 4 2 6 0s4-2 6 0 4 2 6 0"></path>
+        <path d="M2 17c2 2 4 2 6 0s4-2 6 0 4 2 6 0"></path>
+        <path d="M12 3c-1.5 2-1.5 4 0 6"></path>
+      </svg>
+    </div>
+
+    <section class="screen active" data-screen="proposal">
+      <p class="eyebrow">Одесса · Приглашение</p>
+      <h1 class="title">Ты пойдёшь со мной на свидание?</h1>
+      <div class="choice-arena" id="choiceArena">
+        <button class="btn btn-primary" id="yesBtn">Да</button>
+        <button class="btn btn-ghost" id="noBtn">Нет</button>
+      </div>
+    </section>
+
+    <section class="screen" data-screen="date">
+      <p class="eyebrow">Шаг 1 из 3 · День</p>
+      <h2 class="title-sm">Когда?</h2>
+      <div class="option-grid" data-field="date">
+        <button class="option-card" data-value="Суббота">Суббота</button>
+        <button class="option-card" data-value="Воскресенье">Воскресенье</button>
+      </div>
+      <div class="dots">
+        <span class="dot active"></span><span class="dot"></span><span class="dot"></span>
+      </div>
+    </section>
+
+    <section class="screen" data-screen="time">
+      <p class="eyebrow">Шаг 2 из 3 · Время</p>
+      <h2 class="title-sm">Во сколько?</h2>
+      <div class="time-picker">
+        <output id="timeOutput">13:00</output>
+        <input type="range" min="8" max="18" step="1" value="13" id="timeRange">
+      </div>
+      <button class="btn btn-primary" id="timeNext">Дальше</button>
+      <div class="dots">
+        <span class="dot active"></span><span class="dot active"></span><span class="dot"></span>
+      </div>
+    </section>
+
+    <section class="screen" data-screen="location">
+      <p class="eyebrow">Шаг 3 из 3 · Место</p>
+      <h2 class="title-sm">Куда пойдём?</h2>
+      <div class="option-grid two-col" data-field="location">
+        <button class="option-card" data-value="Море">Море</button>
+        <button class="option-card" data-value="Парк Горького">Парк Горького</button>
+        <button class="option-card" data-value="Аркадия">Аркадия</button>
+        <button class="option-card" data-value="Дерибасовская">Дерибасовская</button>
+      </div>
+      <div class="dots">
+        <span class="dot active"></span><span class="dot active"></span><span class="dot active"></span>
+      </div>
+    </section>
+
+    <section class="screen" data-screen="final">
+      <div class="seal">💌</div>
+      <h2 class="title-sm">Хорошо, принцесс</h2>
+      <div class="summary">
+        <div class="summary-row"><span>День</span><strong id="sumDate">—</strong></div>
+        <div class="summary-row"><span>Время</span><strong id="sumTime">—</strong></div>
+        <div class="summary-row"><span>Место</span><strong id="sumLocation">—</strong></div>
+      </div>
+      <p class="signoff">Хорошего дня ))</p>
+    </section>
+
+  </div>
+</main>
+
+<script>
+(function(){
+  var state = { date:null, time:'13:00', location:null };
+
+  var screens = document.querySelectorAll('.screen');
+  function showScreen(name){
+    screens.forEach(function(s){
+      s.classList.toggle('active', s.dataset.screen === name);
+    });
+  }
+
+  // ---- Кнопка "Нет" убегает от курсора / пальца ----
+  var arena = document.getElementById('choiceArena');
+  var noBtn = document.getElementById('noBtn');
+  var yesBtn = document.getElementById('yesBtn');
+  var dodgeRadius = 90;
+  var dodging = false;
+
+  function rectOf(el){ return el.getBoundingClientRect(); }
+
+  function randomPosition(){
+    var arenaRect = rectOf(arena);
+    var btnRect = rectOf(noBtn);
+    var maxLeft = Math.max(arenaRect.width - btnRect.width, 0);
+    var maxTop = Math.max(arenaRect.height - btnRect.height, 0);
+    var left = Math.random() * maxLeft;
+    var top = Math.random() * maxTop;
+    return { left: left, top: top };
+  }
+
+  function spawnRipple(x, y){
+    var r = document.createElement('div');
+    r.className = 'ripple';
+    r.style.left = (x - 7) + 'px';
+    r.style.top = (y - 7) + 'px';
+    arena.appendChild(r);
+    setTimeout(function(){ r.remove(); }, 650);
+  }
+
+  function dodge(){
+    if (dodging) return;
+    dodging = true;
+    var old = rectOf(noBtn);
+    var arenaRect = rectOf(arena);
+    var pos = randomPosition();
+    noBtn.style.position = 'absolute';
+    noBtn.style.left = pos.left + 'px';
+    noBtn.style.top = pos.top + 'px';
+    spawnRipple(old.left - arenaRect.left + old.width/2, old.top - arenaRect.top + old.height/2);
+    setTimeout(function(){ dodging = false; }, 120);
+  }
+
+  function distanceToButton(clientX, clientY){
+    var r = rectOf(noBtn);
+    var cx = r.left + r.width/2;
+    var cy = r.top + r.height/2;
+    return Math.hypot(clientX - cx, clientY - cy);
+  }
+
+  arena.addEventListener('pointermove', function(e){
+    if (distanceToButton(e.clientX, e.clientY) < dodgeRadius){
+      dodge();
+    }
+  });
+  noBtn.addEventListener('touchstart', function(e){
+    e.preventDefault();
+    dodge();
+  }, { passive:false });
+  noBtn.addEventListener('click', function(e){
+    e.preventDefault();
+    dodge();
+  });
+
+  yesBtn.addEventListener('click', function(){
+    showScreen('date');
+  });
+
+  // ---- Шаг: день ----
+  document.querySelectorAll('[data-field="date"] .option-card').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      document.querySelectorAll('[data-field="date"] .option-card').forEach(function(b){ b.classList.remove('selected'); });
+      btn.classList.add('selected');
+      state.date = btn.dataset.value;
+      setTimeout(function(){ showScreen('time'); }, 350);
+    });
+  });
+
+  // ---- Шаг: время ----
+  var timeRange = document.getElementById('timeRange');
+  var timeOutput = document.getElementById('timeOutput');
+  function formatHour(h){
+    return (h < 10 ? '0' + h : h) + ':00';
+  }
+  timeOutput.textContent = formatHour(timeRange.value);
+  timeRange.addEventListener('input', function(){
+    timeOutput.textContent = formatHour(timeRange.value);
+  });
+  document.getElementById('timeNext').addEventListener('click', function(){
+    state.time = formatHour(timeRange.value);
+    showScreen('location');
+  });
+
+  // ---- Шаг: локация ----
+  document.querySelectorAll('[data-field="location"] .option-card').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      document.querySelectorAll('[data-field="location"] .option-card').forEach(function(b){ b.classList.remove('selected'); });
+      btn.classList.add('selected');
+      state.location = btn.dataset.value;
+      setTimeout(finalize, 350);
+    });
+  });
+
+  function finalize(){
+    document.getElementById('sumDate').textContent = state.date;
+    document.getElementById('sumTime').textContent = state.time;
+    document.getElementById('sumLocation').textContent = state.location;
+    showScreen('final');
+    sendNotification(state);
+  }
+
+  function sendNotification(data){
+    fetch('/api/notify', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    }).catch(function(){ /* тихо игнорируем сетевые ошибки, чтобы не портить впечатление */ });
+  }
+})();
+</script>
+
+</body>
+</html>
